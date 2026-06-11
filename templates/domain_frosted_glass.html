@@ -1,0 +1,50 @@
+{% extends "domain_base.html" %}
+{% block domain_content %}
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('domain_frosted_glass') }}</h1>
+  </div>
+  <div class="section__body typo">
+    <form method="post">
+      <div class="row">
+        <div class="medium-10 columns form__item">
+          <label class="checkbox">
+            <input type="hidden" name="enabled" value="false">
+            <input name="enabled" type="checkbox" value="true"{{ ' checked' if enabled }}>
+            {{ _('frosted_glass_enabled') }}
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="medium-4 columns form__item">
+          <label>
+            {{ _('frosted_glass_opacity') }}
+            <input name="opacity" value="{{ opacity }}" class="textbox" type="number" step="0.05" min="0.05" max="0.95">
+          </label>
+        </div>
+        <div class="medium-4 columns form__item end">
+          <label>
+            {{ _('frosted_glass_blur') }}
+            <input name="blur" value="{{ blur }}" class="textbox" type="number" min="1" max="100">
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="medium-10 columns form__item end">
+          <button class="rounded primary button" type="submit">{{ _('frosted_glass_save') }}</button>
+        </div>
+      </div>
+    </form>
+    {% if enabled %}
+    <div class="row" style="margin-top: 1rem">
+      <div class="medium-10 columns">
+        <div style="background: rgba(255,255,255,{{ opacity }}); backdrop-filter: blur({{ blur }}px); padding: 2rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12);">
+          <strong>预览效果</strong>
+          <p style="margin: 0.5rem 0 0">画布透明度: {{ opacity }}，模糊强度: {{ blur }}px</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

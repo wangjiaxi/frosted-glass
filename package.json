@@ -1,0 +1,13 @@
+{
+  "name": "frosted-glass",
+  "version": "1.0.0",
+  "description": "Frosted Glass - 毛玻璃画布效果，透出 body 背景图",
+  "main": "index.ts",
+  "files": [
+    "frontend",
+    "templates"
+  ],
+  "hydro": {
+    "cli": false
+  }
+}
