@@ -85,4 +85,13 @@ export async function apply(ctx: Context) {
     frosted_glass_save: 'Save Settings',
   });
 
+  // Inject frosted glass config into UiContext on every request, so the
+  // template can render the CSS server-side — immune to PJAX head replacement.
+  // Different handlers store domain differently: ManageHandler stores a
+  // DomainDoc (with _id), while simple handlers may store a plain string.
+  ctx.on('handler/after', async (that) => {
+    const domainId = typeof that.domain === 'string' ? that.domain : that.domain?._id;
+    if (!domainId) return;
+    that.UiContext.frostedGlass = await getConfig(domainId);
+  });
 }
