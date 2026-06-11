@@ -40,10 +40,22 @@ async function applyFrostedGlass() {
 // Initial application on first page load
 addPage(new AutoloadPage('frosted_glass', applyFrostedGlass));
 
-// PJAX navigations may replace <head>, removing our <style>.
-// Watch for removal and re-apply immediately.
-new MutationObserver(() => {
-  if (!document.getElementById('fg-s')) {
-    applyFrostedGlass();
+// PJAX replaces the entire <head> element, so a MutationObserver on
+// document.head would die with the old node. Instead, we watch the
+// <html> element for <head> removal, then re-apply after the new
+// <head> has been inserted.
+new MutationObserver((mutations) => {
+  for (const m of mutations) {
+    for (const node of m.removedNodes) {
+      if (node instanceof HTMLElement && node.tagName === 'HEAD') {
+        // <head> was replaced — wait for new head to settle, then re-apply
+        setTimeout(() => {
+          if (!document.getElementById('fg-s')) {
+            applyFrostedGlass();
+          }
+        }, 0);
+        return;
+      }
+    }
   }
-}).observe(document.head, { childList: true });
+}).observe(document.documentElement, { childList: true });
