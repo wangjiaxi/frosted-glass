@@ -15,6 +15,10 @@ async function applyFrostedGlass() {
   const domainId = getDomainId();
   if (!domainId) return;
 
+  // Remove previous style so it can be re-created with fresh config
+  const existing = document.getElementById('fg-s');
+  if (existing) existing.remove();
+
   try {
     const res = await fetch(`/frosted-glass/config?domainId=${domainId}`, {
       credentials: 'same-origin',
@@ -31,4 +35,8 @@ async function applyFrostedGlass() {
   }
 }
 
+// Apply on every page load (including PJAX navigations)
 addPage(new AutoloadPage('frosted_glass', applyFrostedGlass));
+
+// Also re-apply on every Hydrooj page initialization event for PJAX resilience
+$(document).on('vjPageFullyInitialized', applyFrostedGlass);
