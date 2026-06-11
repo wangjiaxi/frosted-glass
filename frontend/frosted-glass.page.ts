@@ -13,11 +13,13 @@ function getDomainId(): string {
 
 async function applyFrostedGlass() {
   const domainId = getDomainId();
-  if (!domainId) return;
 
-  // Remove previous style so it can be re-created with fresh config
+  // Remove previous style
   const existing = document.getElementById('fg-s');
   if (existing) existing.remove();
+
+  // No domain in URL → no effect
+  if (!domainId) return;
 
   try {
     const res = await fetch(`/frosted-glass/config?domainId=${domainId}`, {
@@ -35,8 +37,13 @@ async function applyFrostedGlass() {
   }
 }
 
-// Apply on every page load (including PJAX navigations)
+// Initial application on first page load
 addPage(new AutoloadPage('frosted_glass', applyFrostedGlass));
 
-// Also re-apply on every Hydrooj page initialization event for PJAX resilience
-$(document).on('vjPageFullyInitialized', applyFrostedGlass);
+// PJAX navigations may replace <head>, removing our <style>.
+// Watch for removal and re-apply immediately.
+new MutationObserver(() => {
+  if (!document.getElementById('fg-s')) {
+    applyFrostedGlass();
+  }
+}).observe(document.head, { childList: true });
